@@ -189,6 +189,14 @@ def apply_texture_from_file_browser():
         if mat is None:
             mat = create_material_with_image(image)
 
+        # Detect and wire PBR maps for the selected texture
+        from ..material_browser.scanner import find_pbr_maps_for_file
+        from ..material_browser.node_wiring import wire_pbr_maps
+        pbr_group = find_pbr_maps_for_file(current_path)
+        if pbr_group is not None:
+            wire_pbr_maps(mat, pbr_group)
+            debug_log(f"[FileBrowser] PBR maps wired: {list(pbr_group.maps.keys())}")
+
         fb_id_layer = get_face_id_layer(bm)
         face_old_info = {}
         for f in selected_faces:
