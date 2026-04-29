@@ -226,15 +226,9 @@ Hold ctrl to lock the axis, allowing you to move the cursor off a given face whi
 
 After a cube cut, WELD will invert the cube.
 
-#### Knife Cut
-
-Press K in edit mode to enter knife cut mode. Click on mesh faces to place cut points snapped to the Anvil grid. Press Enter, Space, or Right Click to confirm the cut. Press Escape to cancel.
-
-Hold Shift to place points off-grid on the surface. Hold Alt to snap to the closest vertex (including previously placed cut points).
-
 #### 3D Cursor to Grid
 
-Press Shift-X (or click the cursor icon next to the grid size display) to enter 3D Cursor to Grid mode. Click to place Blender's 3D cursor snapped to the Anvil grid. Hold Shift to place the cursor off-grid on the surface.
+Press Shift-X (or click the cursor icon next to the grid size display) to enter 3D Cursor to Grid mode. Click to place Blender's 3D cursor snapped to the Anvil grid. Hold Shift to place the cursor off-grid on the surface. Hold Ctrl to lock the grid plane, allowing you to move the cursor into the air while keeping it on the same virtual grid plane.
 
 ### Camera and Viewport Tools
 

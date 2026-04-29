@@ -33,6 +33,8 @@ class LEVELDESIGN_OT_cursor_to_grid(bpy.types.Operator):
         self._current_normal = None
         self._is_2d_view = utils.is_2d_view(context)
         self._is_off_grid = False
+        self._axis_lock_normal = None
+        self._axis_lock_plane_point = None
 
         # Save original cursor position for ESC restore
         self._original_cursor = context.scene.cursor.location.copy()
@@ -63,8 +65,13 @@ class LEVELDESIGN_OT_cursor_to_grid(bpy.types.Operator):
             utils.tag_redraw_all_3d_views()
             return {'RUNNING_MODAL'}
 
-        # Shift press/release — update snap
-        if event.type in ('LEFT_SHIFT', 'RIGHT_SHIFT'):
+        # Shift/Ctrl press/release — update snap
+        if event.type in ('LEFT_SHIFT', 'RIGHT_SHIFT',
+                          'LEFT_CTRL', 'RIGHT_CTRL'):
+            # Ctrl release clears axis lock
+            if event.type in ('LEFT_CTRL', 'RIGHT_CTRL') and event.value == 'RELEASE':
+                self._axis_lock_normal = None
+                self._axis_lock_plane_point = None
             self._update_snap(context, event)
             utils.tag_redraw_all_3d_views()
             return {'PASS_THROUGH'}
@@ -87,12 +94,13 @@ class LEVELDESIGN_OT_cursor_to_grid(bpy.types.Operator):
     def _update_snap(self, context, event):
         """Update the snapped position under the mouse cursor."""
         shift_held = event.shift
-        self._is_off_grid = shift_held
+        ctrl_held = event.ctrl
+        self._is_off_grid = shift_held and not ctrl_held
 
         if self._is_2d_view:
             self._update_snap_2d(context, event, shift_held)
         else:
-            self._update_snap_3d(context, event, shift_held)
+            self._update_snap_3d(context, event, shift_held, ctrl_held)
 
     def _update_snap_2d(self, context, event, off_grid):
         """Snap in 2D ortho view."""
@@ -116,8 +124,32 @@ class LEVELDESIGN_OT_cursor_to_grid(bpy.types.Operator):
             self._current_snap = snapping.snap_to_grid(point, grid_size)
         self._current_normal = plane_normal
 
-    def _update_snap_3d(self, context, event, off_grid):
+    def _update_snap_3d(self, context, event, off_grid, ctrl_held=False):
         """Snap in 3D perspective view."""
+        if ctrl_held and not off_grid:
+            # Axis lock: capture the current face plane on first ctrl frame
+            if self._axis_lock_normal is None:
+                snapped, face_normal, _, _ = snapping.calculate_first_vertex_snap_3d(
+                    context, event
+                )
+                if snapped is not None and face_normal is not None:
+                    self._axis_lock_normal = face_normal.copy()
+                    self._axis_lock_plane_point = snapped.copy()
+
+            # Use locked plane if available
+            if self._axis_lock_normal is not None:
+                snapped, face_normal, _, _ = snapping.calculate_first_vertex_snap_3d_on_plane(
+                    context, event,
+                    self._axis_lock_plane_point, self._axis_lock_normal
+                )
+                if snapped is not None:
+                    self._current_snap = snapped
+                    self._current_normal = face_normal
+                else:
+                    self._current_snap = None
+                    self._current_normal = None
+                return
+
         if off_grid:
             hit, location, normal, _, _, _ = utils.raycast_scene(context, event)
             if hit and location is not None:
@@ -150,7 +182,7 @@ class LEVELDESIGN_OT_cursor_to_grid(bpy.types.Operator):
     def _update_header(self, context):
         """Update header text."""
         context.area.header_text_set(
-            "3D Cursor to Grid: Click to place | Shift=Off-Grid | ESC=Cancel"
+            "3D Cursor to Grid: Click to place | Shift=Off-Grid | Ctrl=Lock Plane | ESC=Cancel"
         )
 
     def _draw_callback_3d(self, context):
