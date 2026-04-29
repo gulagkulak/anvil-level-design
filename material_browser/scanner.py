@@ -131,13 +131,16 @@ def find_pbr_maps_for_file(filepath: str) -> Optional[TextureGroup]:
     sibling_maps = _scan_directory_for_maps(directory, base_name)
     group.maps.update(sibling_maps)
 
-    # 2. Scan "pbr" subfolder
-    pbr_dir = os.path.join(directory, 'pbr')
-    if os.path.isdir(pbr_dir):
-        pbr_maps = _scan_directory_for_maps(pbr_dir, base_name)
-        # Only add maps not already found in sibling scan
-        for map_type, path in pbr_maps.items():
-            if map_type not in group.maps:
-                group.maps[map_type] = path
+    # 2. Scan "pbr" subfolder (case-insensitive: pbr, PBR, Pbr, etc.)
+    try:
+        for entry in os.scandir(directory):
+            if entry.is_dir() and entry.name.lower() == 'pbr':
+                pbr_maps = _scan_directory_for_maps(entry.path, base_name)
+                for map_type, path in pbr_maps.items():
+                    if map_type not in group.maps:
+                        group.maps[map_type] = path
+                break
+    except (OSError, PermissionError):
+        pass
 
     return group if group.has_pbr else None
