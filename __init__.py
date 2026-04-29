@@ -362,6 +362,7 @@ class LevelDesignPreferences(bpy.types.AddonPreferences):
             "leveldesign.knife_cut": "Tools",
             "leveldesign.context_weld": "Tools",
             "leveldesign.toggle_grid_overlay": "Tools",
+            "leveldesign.cursor_to_grid": "Tools",
             "leveldesign.uv_transform_modal": "UV",
             "leveldesign.snapping_mode_dispatch": "UV",
         }

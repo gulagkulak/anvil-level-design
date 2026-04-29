@@ -232,6 +232,10 @@ Press K in edit mode to enter knife cut mode. Click on mesh faces to place cut p
 
 Hold Shift to place points off-grid on the surface. Hold Alt to snap to the closest vertex (including previously placed cut points).
 
+#### 3D Cursor to Grid
+
+Press Shift-X (or click the cursor icon next to the grid size display) to enter 3D Cursor to Grid mode. Click to place Blender's 3D cursor snapped to the Anvil grid. Hold Shift to place the cursor off-grid on the surface.
+
 ### Camera and Viewport Tools
 
 Hotkeys are intended to be blender default.
