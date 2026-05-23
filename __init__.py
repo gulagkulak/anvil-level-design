@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Anvil Level Design",
     "author": "Alex Hetherington",
-    "version": (1, 6, 5),
+    "version": (1, 6, 8),
     "blender": (5, 1, 0),
     "location": "View3D > Sidebar > Level Design",
     "description": "TrenchBroom-style UV tools, texture application, and grid controls for level design",
@@ -556,6 +556,14 @@ class LevelDesignPreferences(bpy.types.AddonPreferences):
 def register():
     global _version_warning_handle
 
+    version = ".".join(str(v) for v in bl_info["version"])
+    blender_version = ".".join(str(v) for v in bpy.app.version[:3])
+    print(
+        "Anvil Level Design: Registering "
+        f"addon_version={version} blender={blender_version} "
+        f"package={__package__!r}",
+        flush=True,
+    )
     print("Anvil Level Design: Debug logging is DISABLED (toggle in Anvil Settings > Debug)", flush=True)
 
     if not _VERSION_OK:

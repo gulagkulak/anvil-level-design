@@ -75,6 +75,7 @@ Ctrl-Alt Left mouse applies a UV without changing the material. Ctrl-Alt Right m
 
 Manual UV adjustments are possible via the Anvil LD panel:
 * Scale, Rotation, and Offset can be manually set. At 1 scale, the pixels per meter setting controls how large materials appear in the level
+* Offset can be randomised using the randomise buttons by the Offset fields. The icon is a 'refresh' icon because the selection is limited :)
 * UV shapes that do not match the 3d face are not strongly support but:
 * When UV lock is turned on, adjusting a face will cause the applied material to warp along with the face
 * When UV lock is turned off, adjust a face will not affect the material in world space e.g. when extending a wall, the applied wall material will remain natural looking (bricks won't stretch)
@@ -322,6 +323,7 @@ For a more convenient experience I recommend you consider adjusting the followin
 * The way we run initial addon setup is edge case city. See comments in code.
 * It's not feasible to have paint mode respect backface culling due to the complexity of brush operators. It means you must be 'inside' a room to paint faces you can see, or hide backfaces. Which is additionally annoying (above needing to select them in the first place given we ignore them due to backface culling) because you cannot select / hide faces in painting modes. I'm currently experimenting with forcing face orientation to be on in vertex paint mode. Anvil sets the front face orientation colour to transparent. Or maybe adding a "hide all hidden-anyway-because-they-are-not-facing-you" faces button
 * We mostly do texture application and propogation via the scale / offset / rotation abstraction. Affine based texture application is more general; currently only alt-left click will use affine texture application, and only in some cases (this is really a note to myself to not forget about it!)
+* We abuse meta data to store various items. Specifically unique ids (not such an abuse), and information about welds and 'transaction' numbers to faciliate undo and redo for welds and cross object texture application respectively
 * Blender's spin operator seems to trigger the undo/redo stack every frame...? We hack around that.
 * Spin leaves zero-area wall faces along its axis; we detect and delete them by checking `bpy.context.active_operator == MESH_OT_spin` in the depsgraph handler. This is the only place we use active_operator, and the check fires only on spin. Because active_operator is sticky, the reference can leak across tests and trick the handler into running the cleanup mid-extrude (welding the new duplicate verts back into the old ones). Production doesn't appear to hit this because normal keymap dispatch updates active_operator to the new op before any geometry depsgraph fires — but the timing is fragile, so worth bearing in mind.
 

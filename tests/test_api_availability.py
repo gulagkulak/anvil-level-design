@@ -5,6 +5,8 @@ from .base_test import AnvilTestCase
 
 # Every bpy.ops.* operator the addon depends on (excluding custom leveldesign/hotspot ops)
 _REQUIRED_OPERATORS = [
+    "ed.redo",
+    "ed.undo",
     "ed.undo_push",
     "export_scene.gltf",
     "file.make_paths_relative",
@@ -68,8 +70,21 @@ class APIAvailabilityTest(AnvilTestCase):
         # ghost texture preview to match the material's interpolation.
         if not hasattr(gpu.types.GPUTexture, "filter_mode"):
             missing.append("gpu.types.GPUTexture.filter_mode")
-
         self.assertEqual(
             missing, [],
             f"Missing GPU API symbols: {', '.join(missing)}"
+        )
+
+    def test_all_required_blender_data_apis_exist(self):
+        missing = []
+        mesh = bpy.data.meshes.new("api_availability_mesh")
+        try:
+            if not hasattr(mesh.materials, "clear"):
+                missing.append("Mesh.materials.clear")
+        finally:
+            bpy.data.meshes.remove(mesh)
+
+        self.assertEqual(
+            missing, [],
+            f"Missing Blender data APIs: {', '.join(missing)}"
         )

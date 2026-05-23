@@ -23,6 +23,7 @@ from . import grid_overlay
 from . import fixed_hotspot_overlay
 from . import uv_transform_modal
 from . import cursor_to_grid
+from . import uv_randomize_offset
 
 
 def register():
@@ -51,9 +52,11 @@ def register():
     fixed_hotspot_overlay.register()
     uv_transform_modal.register()
     cursor_to_grid.register()
+    uv_randomize_offset.register()
 
 
 def unregister():
+    uv_randomize_offset.unregister()
     cursor_to_grid.unregister()
     uv_transform_modal.unregister()
     fixed_hotspot_overlay.unregister()

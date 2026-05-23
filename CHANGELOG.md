@@ -1,5 +1,20 @@
 # Anvil Level Design Changelog
 
+# 1.6.8
+- Assigning textures to face no longer automatically consumes all unassigned faces on an object
+- Cube cut of 0 area initial face is no longer allowed
+- Invalid cube cut and box builder wireframes are red
+- Turn off graphics cards diagnostics. The crash is was not Anvil. (I might regret this but I am OCD about not spamming your logs)
+
+# 1.6.7
+- Add randomise offsets button
+- Support undo / redo for cross object transactions (experimental!)
+- Cube cut no longer merges vertices across unconnected meshes within the same object
+- Add some graphics cards diagnostics logs on by default (to help with debugging some obscure issues)
+
+# 1.6.6
+- Show pixel size next to grid size in panel @gulagkulak
+
 # 1.6.5
 - Applying textures of different size from the file browser no longer resets scale
 
